@@ -8,10 +8,7 @@ final class WorkManager extends HiveCacheManager<WorkModel> {
 
   @override
   Future<void> addItems(WorkModel items) async {
-    print(items);
-    print(items.dayOfTime);
     await _box?.add(items);
-    print(_box?.values.toList().length);
   }
 
   @override

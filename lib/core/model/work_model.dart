@@ -7,62 +7,41 @@ final class WorkModel {
   @HiveField(0)
   final int id;
   @HiveField(1)
-  final String machinistOne;
+  final String machinist;
   @HiveField(2)
-  final String machinistTwo;
-  @HiveField(3)
   final int trainNumber;
+  @HiveField(3)
+  final int? trainNumberTwo;
   @HiveField(4)
-  final String startTime;
+  final DateTime startTime;
   @HiveField(5)
-  final String finishTime;
+  final DateTime? endTime;
   @HiveField(6)
-  final String exitStation;
+  final bool? offDay;
   @HiveField(7)
-  final String arrivalStation;
-  @HiveField(8)
-  final DateTime dayOfTime;
-  @HiveField(9)
-  final bool offDay;
-  @HiveField(10)
-  final bool weekOfDay;
-  @HiveField(11)
-  final int machinistOneNumber;
-  @HiveField(12)
-  final int machinistTwoNumber;
+  final bool? weekOfDay;
 
   WorkModel({
-      required this.id,
-      required this.machinistOne,
-      required this.machinistTwo,
-      required this.trainNumber,
-      required this.startTime,
-      required this.finishTime,
-      required this.exitStation,
-      required this.arrivalStation,
-      required this.dayOfTime,
-      required this.offDay,
-      required this.weekOfDay,
-      required this.machinistOneNumber,
-      required this.machinistTwoNumber
-      });
+    required this.id,
+    required this.machinist,
+    required this.trainNumber,
+    this.trainNumberTwo,
+    required this.startTime,
+    this.endTime,
+    this.offDay,
+    this.weekOfDay,
+  });
 
   factory WorkModel.fromMap(Map<String, dynamic> map) {
     return WorkModel(
       id: map['id'] as int,
-      machinistOne: map['machinistOne'] as String,
-      machinistTwo: map['machinistTwo'] as String,
+      machinist: map['machinist'] as String,
       trainNumber: map['trainNumber'] as int,
-      startTime: map['startTime'] as String,
-      finishTime: map['finishTime'] as String,
-      exitStation: map['exitStation'] as String,
-      arrivalStation: map['arrivalStation'] as String,
-      dayOfTime: map['dayOfTime'] as DateTime,
+      trainNumberTwo: map['trainNumberTwo'] as int,
+      startTime: map['startTime'] as DateTime,
+      endTime: map['endTime'] as DateTime,
       offDay: map['offDay'] as bool,
       weekOfDay: map['weekOfDay'] as bool,
-      machinistOneNumber: map['machinistOneNumber'] as int,
-      machinistTwoNumber: map['machinistTwoNumber'] as int,
     );
   }
-
 }
