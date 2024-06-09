@@ -4,9 +4,10 @@ import 'package:project_train/core/state/app_state.dart';
 import 'package:provider/provider.dart';
 
 class TimeSheet extends StatelessWidget {
-  const TimeSheet({super.key, required this.start, required this.onDateTimeChanged});
+  const TimeSheet({super.key, required this.start, required this.onDateTimeChanged, this.dateTime});
 
   final bool start;
+  final DateTime? dateTime;
   final Function(DateTime) onDateTimeChanged;
 
   @override
@@ -19,14 +20,15 @@ class TimeSheet extends StatelessWidget {
         color: Colors.white
       ),
       child: CupertinoDatePicker(
+        initialDateTime: dateTime ?? DateTime.now(),
         dateOrder: DatePickerDateOrder.dmy,
         backgroundColor: Colors.white,
         onDateTimeChanged: (time) {
           onDateTimeChanged(time);
           if(start) {
-            context.read<AppState>().setStartTime(time);
+            context.read<AppState>().sStartTime(time);
           } else {
-            context.read<AppState>().setFinishTime(time);
+            context.read<AppState>().finishTime(time);
           }
         },
         mode: CupertinoDatePickerMode.dateAndTime,

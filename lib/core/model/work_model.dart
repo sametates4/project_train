@@ -44,4 +44,16 @@ final class WorkModel {
       weekOfDay: map['weekOfDay'] as bool,
     );
   }
+
+  factory WorkModel.fromJson(Map<String, dynamic> json) => WorkModel(
+    id: json["id"],
+    machinist: json["machinist"],
+    trainNumber: json["trainNumber"],
+    trainNumberTwo: json["trainNumberTwo"],
+    startTime: json["startTime"],
+    endTime: json["endTime"],
+    offDay: json["offDay"],
+    weekOfDay: json["weekOfDay"]
+  );
+
 }

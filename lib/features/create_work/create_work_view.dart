@@ -6,12 +6,15 @@ import 'package:project_train/core/function/app_function.dart';
 import 'package:project_train/core/model/work_model.dart';
 import 'package:project_train/core/state/app_state.dart';
 import 'package:project_train/sheet/time_sheet.dart';
+import 'package:project_train/widget/sheet_divider.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 @RoutePage()
 class CreateWorkView extends StatefulWidget {
-  const CreateWorkView({super.key, this.model});
+  const CreateWorkView({super.key, this.model, required this.controller});
   final WorkModel? model;
+  final CalendarController controller;
 
   @override
   State<CreateWorkView> createState() => _CreateWorkViewState();
@@ -39,7 +42,6 @@ class _CreateWorkViewState extends State<CreateWorkView> {
 
   void setData() {
     final names = widget.model!.machinist.split(' - ');
-    print('İtem İD: ${widget.model!.id}');
     machinist.text = names[0];
     machinistTwo.text = names[1];
     trainNumber.text = widget.model!.trainNumber.toString();
@@ -60,9 +62,10 @@ class _CreateWorkViewState extends State<CreateWorkView> {
         color: Colors.white,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
         child: Column(
           children: [
+            SheetDivider.showDivider(),
             TextField(
               controller: machinist,
               textInputAction: TextInputAction.next,
@@ -146,6 +149,7 @@ class _CreateWorkViewState extends State<CreateWorkView> {
                             AppFunction.showMainSheet(
                                 context: context,
                                 child: TimeSheet(
+                                  dateTime: context.read<AppState>().startTime,
                                   start: true,
                                   onDateTimeChanged: (date) {
                                     startTime.text = AppFunction.dateTimeFormat(date);
@@ -180,6 +184,7 @@ class _CreateWorkViewState extends State<CreateWorkView> {
                             AppFunction.showMainSheet(
                                 context: context,
                                 child: TimeSheet(
+                                    dateTime: context.read<AppState>().endTime,
                                     start: false,
                                     onDateTimeChanged: (date) {
                                       endTime.text = AppFunction.dateTimeFormat(date);
@@ -209,7 +214,7 @@ class _CreateWorkViewState extends State<CreateWorkView> {
                 if(widget.model == null) {
                   context.read<AppState>().addWorkData(items: working);
                 } else {
-                 context.read<AppState>().updateWorkData(index: widget.model!.id, item: working);
+                 context.read<AppState>().updateWorkData(index: widget.model!.id, item: working,month: widget.controller.displayDate!.month);
                 }
                 context.router.popForced();
               },
