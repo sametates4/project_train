@@ -8,8 +8,8 @@ import 'package:project_train/features/create_work/create_work_view.dart';
 import 'package:project_train/features/table/table_view.dart';
 import 'package:project_train/widget/auth.dart';
 import 'package:project_train/widget/backup.dart';
+import 'package:project_train/widget/restore_data.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../core/function/app_function.dart';
@@ -34,6 +34,7 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
     Provider.of<AppState>(context, listen: false).ensureInit();
     Future.delayed(const Duration(microseconds: 1)).then((value) => authCheck());
+
   }
 
   Future<void> authCheck() async {
@@ -47,20 +48,35 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  Future<void> nahCheck() async {
+    if(UserService.instance.currentUser!.kky == 11006602) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              child: Container(
+                width: 300,
+                height: 300,
+                color: Colors.white,
+                child: Center(child: Image.asset('assets/nah.jpg'),)
+              ),
+            );
+          },
+      );
+    }
+  }
   final calenderController = CalendarController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(context.watch<AppState>().user?.name ?? ''),
         centerTitle: false,
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: Text(
-                'Çalışma Saati: ${context.watch<AppState>().monthlyWorkTime}'),
-          ),
+          Text(
+              'Çalışma Saati: ${context.watch<AppState>().monthlyWorkTime}'),
           PopupMenuButton(
             icon: const Icon(Icons.more_vert_outlined),
             position: PopupMenuPosition.under,
@@ -76,6 +92,12 @@ class _HomeViewState extends State<HomeView> {
                   child: const Text('Backup'),
                   onTap: () {
                     AppFunction.showMainSheet(context: context, child: const Backup());
+                  },
+                ),
+                PopupMenuItem(
+                  child: const Text('ReBackup'),
+                  onTap: () {
+                    AppFunction.showMainSheet(context: context, child: const RestoreData());
                   },
                 ),
               ];
@@ -99,13 +121,15 @@ class _HomeViewState extends State<HomeView> {
             dataSource: value.loading
                 ? WorkDataManager(value.work ?? [])
                 : WorkDataManager([]),
+
             monthViewSettings: const MonthViewSettings(
               showAgenda: true,
               appointmentDisplayMode: MonthAppointmentDisplayMode.indicator,
-              agendaItemHeight: 120,
+              agendaItemHeight: 130,
             ),
             appointmentBuilder: (context, detail) {
               final WorkModel appointment = detail.appointments.first;
+              HourFunction.getNightWorkShift(appointment, detail.date);
               return Container(
                   width: double.infinity,
                   padding: const EdgeInsets.only(left: 10, top: 5),
@@ -133,7 +157,10 @@ class _HomeViewState extends State<HomeView> {
                           Text(
                               'Gece Çalışması: ${HourFunction.getNightWorking(appointment, detail.date)}'),
                           Text(
-                              'Fiili Çalışma: ${HourFunction.getActiveWorking(appointment, detail.date)}')
+                              'Fiili Çalışma: ${HourFunction.getActiveWorking(appointment, detail.date)}'),
+                          appointment.endTime?.day == detail.date.day ?
+                          Text('Gece Çalışması Aşan Kısım: ${HourFunction.getNightWorkShift(appointment, detail.date)}')
+                              : const Text('Gece Çalışması Aşan Kısım: -----')
                         ],
                       ),
                       Row(

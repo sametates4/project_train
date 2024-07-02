@@ -38,7 +38,7 @@ final class BackupState extends ChangeNotifier {
       Map<String, dynamic> data = {
         'machinist': i.machinist,
         'trainNumber': i.trainNumber,
-        'trainNumberTwo': i.trainNumberTwo,
+        'trainNumberTwo': i.trainNumberTwo ?? '',
         'startTime': i.startTime.toString(),
         'endTime': i.endTime != null ? i.endTime.toString() : '',
         'offDay': i.offDay == null ? '' : i.offDay.toString(),

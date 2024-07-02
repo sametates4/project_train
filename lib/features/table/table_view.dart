@@ -46,27 +46,24 @@ class _TableViewState extends State<TableView> {
         source: employeeDataSource,
         allowColumnsDragging: true,
         allowColumnsResizing: true,
-
+        allowMultiColumnSorting: true,
         columnWidthMode: ColumnWidthMode.fill,
         columns: <GridColumn>[
           GridColumn(
+            width: 250,
               columnName: 'machinist',
               label: Container(
-                  padding: EdgeInsets.all(16.0),
                   alignment: Alignment.center,
                   child: Text(
                     'Makinist',
                   ))),
           GridColumn(
               columnName: 'trainNumber',
-              label: Container(
-                  padding: EdgeInsets.all(8.0),
-                  alignment: Alignment.center,
-                  child: Text('Giden'))),
+              label:
+                  Container(alignment: Alignment.center, child: Text('Giden'))),
           GridColumn(
               columnName: 'trainNumberTwo',
               label: Container(
-                  padding: EdgeInsets.all(8.0),
                   alignment: Alignment.center,
                   child: Text(
                     'Gelen',
@@ -75,37 +72,44 @@ class _TableViewState extends State<TableView> {
           GridColumn(
               columnName: 'startTime',
               label: Container(
-                  padding: EdgeInsets.all(8.0),
-                  alignment: Alignment.center,
-                  child: Text('İşe Başlama'))),
+                  alignment: Alignment.center, child: Text('İşe Başlama'))),
           GridColumn(
               columnName: 'endTime',
               label: Container(
-                  alignment: Alignment.center,
-                  child: Text('İş Bitiş'))),
+                  alignment: Alignment.center, child: Text('İş Bitiş'))),
           GridColumn(
               columnName: 'activeWorking',
               label: Container(
-                  alignment: Alignment.center,
-                  child: Text('Fiili Çalışma'))),
+                  alignment: Alignment.center, child: Text('Fiili Çalışma'))),
         ],
       ),
     );
   }
 }
 
-
 class DataSource extends DataGridSource {
-
   DataSource({required List<WorkModel> workData}) {
-    _workData = workData.map<DataGridRow>((e) => DataGridRow(cells: [
-      DataGridCell<String>(columnName: 'machinist', value: e.machinist),
-      DataGridCell<int>(columnName: 'trainNumber', value: e.trainNumber),
-      DataGridCell<int>(columnName: 'trainNumberTwo', value: e.trainNumberTwo),
-      DataGridCell<String>(columnName: 'startTime', value: AppFunction.dateTimeFormat(e.startTime)),
-      DataGridCell<String>(columnName: 'endTime', value: AppFunction.dateTimeFormat(e.endTime)),
-      DataGridCell<String>(columnName: 'activeWorking', value: AppFunction.timeFormat(e.endTime!.difference(e.startTime)))
-    ])).toList();
+    _workData = workData
+        .map<DataGridRow>((e) => DataGridRow(cells: [
+              DataGridCell<String>(columnName: 'machinist', value: e.machinist),
+              DataGridCell<int>(
+                  columnName: 'trainNumber', value: e.trainNumber),
+              DataGridCell<int>(
+                  columnName: 'trainNumberTwo', value: e.trainNumberTwo),
+              DataGridCell<String>(
+                  columnName: 'startTime',
+                  value: AppFunction.dateTimeFormat(e.startTime)),
+              DataGridCell<String>(
+                  columnName: 'endTime',
+                  value: AppFunction.dateTimeFormat(e.endTime)),
+              DataGridCell<String>(
+                  columnName: 'activeWorking',
+                  value: e.endTime != null ? AppFunction.timeFormat(
+                      e.endTime!.difference(e.startTime)) : AppFunction.timeFormat(
+                      DateTime.now().difference(e.startTime))
+              )
+            ]))
+        .toList();
   }
 
   List<DataGridRow> _workData = [];
@@ -117,12 +121,10 @@ class DataSource extends DataGridSource {
   DataGridRowAdapter? buildRow(DataGridRow row) {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((e) {
-          return Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.all(8.0),
-            child: Text(e.value.toString()),
-          );
-        }).toList());
+      return Container(
+        alignment: Alignment.center,
+        child: Text(e.value.toString()),
+      );
+    }).toList());
   }
-
 }

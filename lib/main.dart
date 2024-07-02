@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
         title: '4011',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
+          scaffoldBackgroundColor: const Color.fromARGB(255, 245, 245, 245),
           useMaterial3: true,
         ),
           localizationsDelegates: const [

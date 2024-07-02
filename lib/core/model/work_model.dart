@@ -50,10 +50,10 @@ final class WorkModel {
     machinist: json["machinist"],
     trainNumber: json["trainNumber"],
     trainNumberTwo: json["trainNumberTwo"],
-    startTime: json["startTime"],
-    endTime: json["endTime"],
-    offDay: json["offDay"],
-    weekOfDay: json["weekOfDay"]
+    startTime: DateTime.parse(json["startTime"]),
+    endTime: json["endTime"].toString().isNotEmpty ? DateTime.parse(json["endTime"]) : null,
+    offDay: json["offDay"].toString().isNotEmpty ? bool.parse(json["offDay"]) : null,
+    weekOfDay: json["weekOfDay"].toString().isNotEmpty ? bool.parse(json["weekOfDay"]) : null
   );
 
 }

@@ -34,7 +34,7 @@ final class AppFunction {
 
   static dateTimeFormat(DateTime? date) {
     if(date != null) {
-      return DateFormat('d MMM H:mm').format(date);
+      return DateFormat('d MMM H:mm', 'tr').format(date);
     }
     return '';
   }
