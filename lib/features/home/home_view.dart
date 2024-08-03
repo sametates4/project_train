@@ -1,20 +1,19 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:project_train/core/function/hour_function.dart';
-import 'package:project_train/core/manager/work_data_manager.dart';
-import 'package:project_train/core/model/work_model.dart';
-import 'package:project_train/core/service/user_service.dart';
-import 'package:project_train/features/create_work/create_work_view.dart';
-import 'package:project_train/features/table/table_view.dart';
-import 'package:project_train/widget/auth.dart';
-import 'package:project_train/widget/backup.dart';
-import 'package:project_train/widget/restore_data.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import '../../core/constant/button_constant.dart';
 import '../../core/function/app_function.dart';
+import '../../core/manager/work_data_manager.dart';
 import '../../core/model/user_model.dart';
+import '../../core/model/work_model.dart';
+import '../../core/service/user_service.dart';
 import '../../core/state/app_state.dart';
+import '../../widget/appointment_card.dart';
+import '../../widget/auth.dart';
+import '../../widget/create_main_work.dart';
+import '../create_work/create_work_view.dart';
 
 @RoutePage()
 class HomeView extends StatefulWidget {
@@ -25,7 +24,6 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-
   UserModel? user = UserService.instance.currentUser;
   bool firstOpen = false;
 
@@ -33,14 +31,20 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     Provider.of<AppState>(context, listen: false).ensureInit();
-    Future.delayed(const Duration(microseconds: 1)).then((value) => authCheck());
-
+    Future.delayed(const Duration(microseconds: 1))
+        .then((value) => authCheck());
   }
 
   Future<void> authCheck() async {
-    if(user == null) {
+    if (user == null) {
       AppFunction.showMainSheet(
           context: context,
+          padding: EdgeInsets.only(
+            bottom: MediaQuery
+                .of(context)
+                .viewInsets
+                .bottom,
+          ),
           child: const Auth());
     }
     setState(() {
@@ -48,169 +52,82 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  Future<void> nahCheck() async {
-    if(UserService.instance.currentUser!.kky == 11006602) {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return Dialog(
-              child: Container(
-                width: 300,
-                height: 300,
-                color: Colors.white,
-                child: Center(child: Image.asset('assets/nah.jpg'),)
-              ),
-            );
-          },
-      );
-    }
-  }
   final calenderController = CalendarController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(context.watch<AppState>().user?.name ?? ''),
-        centerTitle: false,
-        actions: [
-          Text(
-              'Çalışma Saati: ${context.watch<AppState>().monthlyWorkTime}'),
-          PopupMenuButton(
-            icon: const Icon(Icons.more_vert_outlined),
-            position: PopupMenuPosition.under,
-            itemBuilder: (context) {
-              return [
-                PopupMenuItem(
-                  child: const Text('Table'),
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const TableView()));
-                  },
-                ),
-                PopupMenuItem(
-                  child: const Text('Backup'),
-                  onTap: () {
-                    AppFunction.showMainSheet(context: context, child: const Backup());
-                  },
-                ),
-                PopupMenuItem(
-                  child: const Text('ReBackup'),
-                  onTap: () {
-                    AppFunction.showMainSheet(context: context, child: const RestoreData());
-                  },
-                ),
-              ];
-            },
-          )
-        ],
-      ),
-      body: Consumer<AppState>(
-        builder: (context, value, child) {
-          return SfCalendar(
-            showDatePickerButton: true,
-            view: CalendarView.month,
-            initialSelectedDate: DateTime.now(),
-            firstDayOfWeek: 1,
-            controller: calenderController,
-            onViewChanged: (viewChangedDetails) {
-              if(firstOpen) {
-                value.getMonthlyWork(month: calenderController.displayDate!.month);
-              }
-            },
-            dataSource: value.loading
-                ? WorkDataManager(value.work ?? [])
-                : WorkDataManager([]),
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: Text(context
+              .watch<AppState>()
+              .user
+              ?.name ?? ''),
+          centerTitle: false,
+          backgroundColor: Colors.white,
+          actions: [
+            Text('Çalışma Saati: ${context
+                .watch<AppState>()
+                .monthlyWorkTime}'),
+            PopupMenuButton(
+              icon: const Icon(Icons.more_vert_outlined),
+              position: PopupMenuPosition.under,
+              itemBuilder: (context) =>
+                  ButtonConstant.appbarEntry(context: context),
+            )
+          ],
+        ),
+        body: Consumer<AppState>(
+          builder: (context, value, child) {
+            return SfCalendar(
+              showDatePickerButton: true,
+              view: CalendarView.month,
+              initialSelectedDate: DateTime.now(),
+              firstDayOfWeek: 1,
+              controller: calenderController,
+              headerStyle: const CalendarHeaderStyle(
+                  backgroundColor: Colors.white),
+              onViewChanged: (viewChangedDetails) {
+                if (firstOpen) {
+                  value.getMonthlyWork(
+                      month: calenderController.displayDate!.month);
+                }
+              },
+              dataSource: value.loading
+                  ? WorkDataManager(value.work ?? [])
+                  : WorkDataManager([]),
 
-            monthViewSettings: const MonthViewSettings(
-              showAgenda: true,
-              appointmentDisplayMode: MonthAppointmentDisplayMode.indicator,
-              agendaItemHeight: 130,
-            ),
-            appointmentBuilder: (context, detail) {
-              final WorkModel appointment = detail.appointments.first;
-              HourFunction.getNightWorkShift(appointment, detail.date);
-              return Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.only(left: 10, top: 5),
-                  decoration: const BoxDecoration(
-                      borderRadius:
-                          BorderRadius.only(bottomLeft: Radius.circular(20)),
-                      border: Border(
-                        bottom: BorderSide(color: Colors.black),
-                        left: BorderSide(color: Colors.black),
-                      )),
-                  child: Stack(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            appointment.machinist,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          Text(
-                              'Giden: ${appointment.trainNumber}  -  Gelen: ${HourFunction.trainNumber(appointment.trainNumberTwo)}'),
-                          Text(
-                              'İşe Başlama: ${HourFunction.getStartTime(appointment, detail.date)}, '
-                              'İş Bitiş: ${HourFunction.getEndTime(appointment, detail.date)}'),
-                          Text(
-                              'Gece Çalışması: ${HourFunction.getNightWorking(appointment, detail.date)}'),
-                          Text(
-                              'Fiili Çalışma: ${HourFunction.getActiveWorking(appointment, detail.date)}'),
-                          appointment.endTime?.day == detail.date.day ?
-                          Text('Gece Çalışması Aşan Kısım: ${HourFunction.getNightWorkShift(appointment, detail.date)}')
-                              : const Text('Gece Çalışması Aşan Kısım: -----')
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          PopupMenuButton(
-                            elevation: 10,
-                            position: PopupMenuPosition.under,
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                child: const Text('Düzenle'),
-                                onTap: () {
-                                  AppFunction.showMainSheet(
-                                    context: context,
-                                    child: CreateWorkView(
-                                      model: appointment,
-                                      controller: calenderController,
-                                    ),
-                                  );
-                                },
-                              ),
-                              PopupMenuItem(
-                                child: const Text('Sil'),
-                                onTap: () {
-                                  context.read<AppState>().deleteWorkData(
-                                      index: appointment.id,
-                                      month: calenderController
-                                          .displayDate!.month);
-                                },
-                              )
-                            ],
-                          )
-                        ],
-                      )
-                    ],
-                  ));
+              monthViewSettings: const MonthViewSettings(
+                showAgenda: true,
+                appointmentDisplayMode: MonthAppointmentDisplayMode.indicator,
+                agendaItemHeight: 130,
+              ),
+              appointmentBuilder: (context, detail) {
+                final WorkModel appointment = detail.appointments.first;
+                return AppointmentCard(
+                    appointment: appointment,
+                    detail: detail,
+                    controller: calenderController);
+              },
+            );
+          },
+        ),
+        floatingActionButton: InkWell(
+          child: FloatingActionButton(
+            child: const Icon(Icons.add),
+            onPressed: () {
+              AppFunction.showMainSheet(
+                context: context,
+                child: CreateWorkView(
+                  controller: calenderController,
+                ),
+              );
             },
-          );
-        },
-      ),
-      floatingActionButton: IconButton(
-        icon: const Icon(Icons.add),
-        onPressed: () {
-          AppFunction.showMainSheet(
-              context: context,
-              child: CreateWorkView(
-                controller: calenderController,
-              ));
-        },
-      ),
-    );
+          ),
+          onLongPress: () {
+            AppFunction.showMainSheet(
+                context: context, child: const CreateMainWork());
+          },
+        ));
   }
 }

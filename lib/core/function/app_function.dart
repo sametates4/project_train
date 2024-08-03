@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
@@ -9,20 +10,25 @@ final class AppFunction {
     return endTime.difference(startTime);
   }
 
-  static showMainSheet({required BuildContext context, required Widget child}) {
+  static showMainSheet({required BuildContext context, required Widget child, EdgeInsetsGeometry? padding}) {
     return showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      enableDrag: true,
       builder: (context) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-              child: child,
-            ),
-            const SheetHideButton(),
-          ],
+        return Padding(
+          padding: padding ?? EdgeInsets.zero,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                child: child,
+              ),
+              const SheetHideButton(),
+            ],
+          ),
         );
       },
     );
@@ -51,4 +57,12 @@ final class AppFunction {
 
     return '$formattedHours:$formattedMinutes';
   }
+
+  static Duration parseDuration(String timeString) {
+    List<String> parts = timeString.split(":");
+    int hours = int.parse(parts[0]);
+    int minutes = int.parse(parts[1]);
+    return Duration(hours: hours, minutes: minutes);
+  }
+
 }

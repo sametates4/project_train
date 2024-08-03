@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:project_train/core/function/app_function.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -10,6 +11,8 @@ final class WorkDataManager extends CalendarDataSource {
   WorkDataManager(List<WorkModel> source) {
     appointments = source;
   }
+
+  final time1 = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day+1, 00, 00);
 
   @override
   DateTime getStartTime(int index) {

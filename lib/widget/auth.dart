@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:project_train/core/model/user_model.dart';
-import 'package:project_train/core/service/user_service.dart';
 import 'package:project_train/core/state/app_state.dart';
 import 'package:provider/provider.dart';
 

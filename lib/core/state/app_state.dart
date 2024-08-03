@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:project_train/core/function/app_function.dart';
-
+import 'package:project_train/core/function/hour_function.dart';
 import '../manager/work_manager.dart';
 import '../model/user_model.dart';
 import '../model/work_model.dart';
@@ -22,7 +22,8 @@ final class AppState extends ChangeNotifier{
   DateTime? startTime;
   DateTime? endTime;
   String monthlyWorkTime = "Hesaplanıyor...";
-
+  String nightWorking = "Hesaplanıyor...";
+  String nightWorkAdd = "Hesaplanıyor...";
 
   Future<void> ensureInit() async {
     await _workService.init();
@@ -30,6 +31,7 @@ final class AppState extends ChangeNotifier{
     loading = true;
     notifyListeners();
     getMonthlyWork(month: DateTime.now().month);
+
   }
 
   Future<void> backupData() async {
@@ -129,33 +131,21 @@ final class AppState extends ChangeNotifier{
     notifyListeners();
   }
 
-  void monthlyReport({required DateTime dateTime}) {
-    Duration monthlyWork = const Duration(hours: 0, minutes: 0);
-    Duration monthlyNightWork = const Duration(hours: 0, minutes: 0);
+  void monthlyReport() {
+    Duration nightWork = Duration.zero;
+    Duration nightWorkShift = Duration.zero;
     for(WorkModel i in work ?? []) {
-      if(i.startTime.month == dateTime.month) {
-        if(i.endTime != null) {
-          final dailyActivityWork = i.endTime!.difference(i.startTime);
-          monthlyWork = monthlyWork + dailyActivityWork;
-        } else {
-          final dailyActivityWork = DateTime.now().difference(i.startTime);
-          monthlyWork = monthlyWork + dailyActivityWork;
-        }
-      }
+      final time = HourFunction.getNightWorking(i, DateTime.now());
+      final times = HourFunction.getNightWorkShift(i, DateTime.now());
+      final f = time != "--:--" ? AppFunction.parseDuration(time) : const Duration(hours: 0, minutes: 0);
+      final s = times != "--:--" ? AppFunction.parseDuration(times) : const Duration(hours: 0, minutes: 0);
+      nightWork = nightWork + f;
+      nightWorkShift = nightWorkShift + s;
     }
-    for(WorkModel i in work ?? []) {
-      if(i.startTime.month == dateTime.month) {
-        if(i.endTime != null) {
-          final time = DateTime(i.endTime!.year, i.endTime!.month, i.endTime!.day, 20, 00);
-          Duration nightWork = i.endTime!.difference(time);
-          if (!nightWork.isNegative) {
-            monthlyNightWork = monthlyNightWork + nightWork;
-          }
-        } else {
 
-        }
-      }
-    }
+    nightWorking = AppFunction.timeFormat(nightWork);
+    nightWorkAdd = AppFunction.timeFormat(nightWorkShift);
+    notifyListeners();
   }
 
   void timeClear() {
