@@ -7,7 +7,7 @@ final class WorkModel {
   @HiveField(0)
   final int id;
   @HiveField(1)
-  final String machinist;
+  final String? machinist;
   @HiveField(2)
   final int trainNumber;
   @HiveField(3)
@@ -23,7 +23,7 @@ final class WorkModel {
 
   WorkModel({
     required this.id,
-    required this.machinist,
+    this.machinist,
     required this.trainNumber,
     this.trainNumberTwo,
     required this.startTime,

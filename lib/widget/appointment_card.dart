@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../core/constant/button_constant.dart';
 import '../core/constant/container_decoration.dart';
@@ -9,13 +8,13 @@ import '../core/model/work_model.dart';
 class AppointmentCard extends StatelessWidget {
   const AppointmentCard(
       {super.key,
-      required this.appointment,
-      required this.detail,
-      required this.controller});
+      required this.workData,
+      required this.date,
+      required this.month});
 
-  final WorkModel appointment;
-  final CalendarAppointmentDetails detail;
-  final CalendarController controller;
+  final WorkModel workData;
+  final DateTime date;
+  final DateTime month;
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +27,8 @@ class AppointmentCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: TextConstant.data(
-                model: appointment,
-                detail: detail,
+                model: workData,
+                date: date,
               ).map((text) => Text(text)).toList(),
             ),
             Row(
@@ -40,8 +39,8 @@ class AppointmentCard extends StatelessWidget {
                   position: PopupMenuPosition.under,
                   itemBuilder: (context) => ButtonConstant.popUpEntry(
                     context: context,
-                    model: appointment,
-                    controller: controller,
+                    model: workData,
+                    date: month,
                   ),
                 )
               ],

@@ -30,7 +30,7 @@ final class WorkDataManager extends CalendarDataSource {
 
   @override
   String getSubject(int index) {
-    return _getWorkingData(index).machinist;
+    return _getWorkingData(index).machinist ?? '';
   }
 
   @override

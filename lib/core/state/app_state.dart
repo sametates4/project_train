@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:project_train/core/function/app_function.dart';
 import 'package:project_train/core/function/hour_function.dart';
+import 'package:project_train/core/model/settings_model.dart';
+import 'package:project_train/core/service/setting_service.dart';
 import '../manager/work_manager.dart';
 import '../model/user_model.dart';
 import '../model/work_model.dart';
@@ -15,15 +17,18 @@ final class AppState extends ChangeNotifier{
 
   UserModel? user = UserService.instance.currentUser;
 
+  SettingsModel? setting = SettingService.instance.service;
 
   List<WorkModel>? work;
   bool loading = false;
 
   DateTime? startTime;
   DateTime? endTime;
-  String monthlyWorkTime = "Hesaplanıyor...";
   String nightWorking = "Hesaplanıyor...";
   String nightWorkAdd = "Hesaplanıyor...";
+
+  Duration monthlyWorkTime = Duration.zero;
+  String monthlyWorkTimeString = '';
 
   Future<void> ensureInit() async {
     await _workService.init();
@@ -31,26 +36,6 @@ final class AppState extends ChangeNotifier{
     loading = true;
     notifyListeners();
     getMonthlyWork(month: DateTime.now().month);
-
-  }
-
-  Future<void> backupData() async {
-    for(WorkModel i in work!) {
-      Map<String, dynamic> data = {
-        'machinist': i.machinist,
-        'trainNumber': i.trainNumber,
-        'trainNumberTwo': i.trainNumberTwo,
-        'startTime': i.startTime.toString(),
-        'endTime': i.endTime != null ? i.endTime.toString() : '',
-        'offDay': i.offDay == null ? '' : i.offDay.toString(),
-        'weekOfDay': i.weekOfDay == null ? '' : i.weekOfDay.toString(),
-        'user_id': user?.kky,
-      };
-      print('yükleme işlemi başlayacak');
-      service.backupData(data: data).then((value) {
-        print(value);
-      },);
-    }
   }
 
   Future<void> addWorkData({required WorkModel items}) async {
@@ -68,12 +53,10 @@ final class AppState extends ChangeNotifier{
 
   void setStartTime(DateTime time) {
     startTime = time;
-    //notifyListeners();
   }
 
   void setFinishTime(DateTime? time) {
     endTime = time;
-    //notifyListeners();
   }
 
   void sStartTime(DateTime time) {
@@ -108,7 +91,7 @@ final class AppState extends ChangeNotifier{
   }
 
   void reCalculateMonthlyWork({required int month}) {
-    monthlyWorkTime = '...';
+    monthlyWorkTime = Duration.zero;
     notifyListeners();
     getMonthlyWork(month: month);
   }
@@ -127,7 +110,8 @@ final class AppState extends ChangeNotifier{
         }
       }
     }
-    monthlyWorkTime = AppFunction.timeFormat(time);
+    monthlyWorkTime = time;
+    monthlyWorkTimeString = AppFunction.timeFormat(time);
     notifyListeners();
   }
 
@@ -135,12 +119,14 @@ final class AppState extends ChangeNotifier{
     Duration nightWork = Duration.zero;
     Duration nightWorkShift = Duration.zero;
     for(WorkModel i in work ?? []) {
-      final time = HourFunction.getNightWorking(i, DateTime.now());
-      final times = HourFunction.getNightWorkShift(i, DateTime.now());
-      final f = time != "--:--" ? AppFunction.parseDuration(time) : const Duration(hours: 0, minutes: 0);
-      final s = times != "--:--" ? AppFunction.parseDuration(times) : const Duration(hours: 0, minutes: 0);
-      nightWork = nightWork + f;
-      nightWorkShift = nightWorkShift + s;
+      if(i.startTime.month == DateTime.now().month) {
+        final time = HourFunction.getNightWorking(i, DateTime.now());
+        final times = HourFunction.getNightWorkShift(i, DateTime.now());
+        final f = time != "--:--" ? AppFunction.parseDuration(time) : const Duration(hours: 0, minutes: 0);
+        final s = times != "--:--" ? AppFunction.parseDuration(times) : const Duration(hours: 0, minutes: 0);
+        nightWork = nightWork + f;
+        nightWorkShift = nightWorkShift + s;
+      }
     }
 
     nightWorking = AppFunction.timeFormat(nightWork);
@@ -159,6 +145,18 @@ final class AppState extends ChangeNotifier{
     UserService.instance.setUser(userData);
     user = UserService.instance.currentUser;
     notifyListeners();
+  }
+
+  updateSettings({required SettingsModel settingsData}) {
+    SettingService.instance.updateSettings(settingsData);
+    setting = SettingService.instance.service;
+    notifyListeners();
+  }
+
+  Duration setDuration() {
+    return setting!.workingHour == null
+        ? const Duration(hours: 300)
+        : Duration(hours: setting!.workingHour!.inHours, minutes: setting!.workingHour!.inMinutes);
   }
 
 }

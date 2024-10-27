@@ -18,7 +18,7 @@ class WorkModelAdapter extends TypeAdapter<WorkModel> {
     };
     return WorkModel(
       id: fields[0] as int,
-      machinist: fields[1] as String,
+      machinist: fields[1] as String?,
       trainNumber: fields[2] as int,
       trainNumberTwo: fields[3] as int?,
       startTime: fields[4] as DateTime,

@@ -9,72 +9,55 @@
 
 part of 'app_router.dart';
 
-abstract class _$AppRouter extends RootStackRouter {
-  // ignore: unused_element
-  _$AppRouter({super.navigatorKey});
-
-  @override
-  final Map<String, PageFactory> pagesMap = {
-    CreateWorkRoute.name: (routeData) {
-      final args = routeData.argsAs<CreateWorkRouteArgs>();
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: CreateWorkView(
-          key: args.key,
-          model: args.model,
-          controller: args.controller,
-        ),
-      );
-    },
-    HomeRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const HomeView(),
-      );
-    },
-  };
-}
-
 /// generated route for
 /// [CreateWorkView]
 class CreateWorkRoute extends PageRouteInfo<CreateWorkRouteArgs> {
   CreateWorkRoute({
     Key? key,
     WorkModel? model,
-    required CalendarController controller,
+    required DateTime date,
     List<PageRouteInfo>? children,
   }) : super(
           CreateWorkRoute.name,
           args: CreateWorkRouteArgs(
             key: key,
             model: model,
-            controller: controller,
+            date: date,
           ),
           initialChildren: children,
         );
 
   static const String name = 'CreateWorkRoute';
 
-  static const PageInfo<CreateWorkRouteArgs> page =
-      PageInfo<CreateWorkRouteArgs>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<CreateWorkRouteArgs>();
+      return CreateWorkView(
+        key: args.key,
+        model: args.model,
+        date: args.date,
+      );
+    },
+  );
 }
 
 class CreateWorkRouteArgs {
   const CreateWorkRouteArgs({
     this.key,
     this.model,
-    required this.controller,
+    required this.date,
   });
 
   final Key? key;
 
   final WorkModel? model;
 
-  final CalendarController controller;
+  final DateTime date;
 
   @override
   String toString() {
-    return 'CreateWorkRouteArgs{key: $key, model: $model, controller: $controller}';
+    return 'CreateWorkRouteArgs{key: $key, model: $model, date: $date}';
   }
 }
 
@@ -89,5 +72,10 @@ class HomeRoute extends PageRouteInfo<void> {
 
   static const String name = 'HomeRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const HomeView();
+    },
+  );
 }

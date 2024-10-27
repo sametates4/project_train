@@ -6,13 +6,12 @@ import 'package:project_train/core/state/app_state.dart';
 import 'package:project_train/sheet/time_sheet.dart';
 import 'package:project_train/widget/sheet_divider.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 @RoutePage()
 class CreateWorkView extends StatefulWidget {
-  const CreateWorkView({super.key, this.model, required this.controller});
+  const CreateWorkView({super.key, this.model, required this.date});
   final WorkModel? model;
-  final CalendarController controller;
+  final DateTime date;
 
   @override
   State<CreateWorkView> createState() => _CreateWorkViewState();
@@ -39,8 +38,8 @@ class _CreateWorkViewState extends State<CreateWorkView> {
   }
 
   void setData() {
-    final names = widget.model!.machinist.split(' - ');
-    machinist.text = names[0];
+    final names = widget.model!.machinist!.isNotEmpty ?  widget.model!.machinist?.split(' - ') : ['', ''];
+    machinist.text = names![0];
     machinistTwo.text = names[1];
     trainNumber.text = widget.model!.trainNumber.toString();
     trainNumberTwo.text = widget.model!.trainNumberTwo != null ? widget.model!.trainNumberTwo.toString() : '';
@@ -212,7 +211,7 @@ class _CreateWorkViewState extends State<CreateWorkView> {
                 if(widget.model == null) {
                   context.read<AppState>().addWorkData(items: working);
                 } else {
-                 context.read<AppState>().updateWorkData(index: widget.model!.id, item: working,month: widget.controller.displayDate!.month);
+                 context.read<AppState>().updateWorkData(index: widget.model!.id, item: working, month: widget.date.month);
                 }
                 context.router.popForced();
               },

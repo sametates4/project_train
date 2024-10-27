@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:project_train/widget/setting.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../features/create_work/create_work_view.dart';
 import '../../features/table/table_view.dart';
@@ -15,7 +15,7 @@ final class ButtonConstant {
   static List<PopupMenuEntry> popUpEntry({
     required BuildContext context,
     required WorkModel model,
-    required CalendarController controller,
+    required DateTime date,
   }) {
     return model.machinist == "DEPO"
         ? [
@@ -23,7 +23,7 @@ final class ButtonConstant {
               child: const Text('Sil'),
               onTap: () {
                 context.read<AppState>().deleteWorkData(
-                    index: model.id, month: controller.displayDate!.month);
+                    index: model.id, month: date.month);
               },
             )
           ]
@@ -35,14 +35,14 @@ final class ButtonConstant {
                       context: context,
                       child: CreateWorkView(
                         model: model,
-                        controller: controller,
+                        date: date,
                       ));
                 }),
             PopupMenuItem(
                 child: const Text('Sil'),
                 onTap: () {
                   context.read<AppState>().deleteWorkData(
-                      index: model.id, month: controller.displayDate!.month);
+                      index: model.id, month: date.month);
                 })
           ];
   }
@@ -78,6 +78,15 @@ final class ButtonConstant {
           context.read<AppState>().monthlyReport();
           AppFunction.showMainSheet(
               context: context, child: const Report());
+        },
+      ),
+
+      PopupMenuItem(
+        child: const Text('Ayarlar'),
+        onTap: () {
+          context.read<AppState>().monthlyReport();
+          AppFunction.showMainSheet(
+              context: context, child: const Setting());
         },
       ),
     ];

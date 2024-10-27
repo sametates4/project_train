@@ -70,16 +70,25 @@ final class HourFunction {
 
   static String getNightWorking(WorkModel work, DateTime detail) {
     DateTime currentDayMorning = DateTime(work.startTime.year, work.startTime.month, work.startTime.day, 06, 00);
+    Duration nightDuration = Duration.zero;
     if (work.endTime != null) {
       if (work.startTime.day == work.endTime!.day) {
         Duration morningDuration = Duration.zero;
         if (work.startTime.hour <= 6) {
           morningDuration = currentDayMorning.difference(work.startTime);
         }
+
+        if(work.startTime.hour >= 0) {
+          if(work.startTime.hour <= 6) {
+            final time = DateTime(work.endTime!.year, work.endTime!.month, work.endTime!.day, 06, 00);
+            nightDuration = time.difference(work.startTime);
+          }
+        }
+
         final time = DateTime(work.endTime!.year, work.endTime!.month, work.endTime!.day, 20, 00);
         Duration nightWork = work.endTime!.difference(time);
         Duration finalDuration = nightWork + morningDuration;
-        return nightWork.isNegative ? '--:--' : AppFunction.timeFormat(finalDuration);
+        return nightWork.isNegative ? AppFunction.timeFormat(nightDuration) : AppFunction.timeFormat(finalDuration);
       } else {
         if (work.startTime.day == detail.day) {
           Duration morningDuration = Duration.zero;
@@ -136,13 +145,18 @@ final class HourFunction {
           final nightWorkTime = nightWork + morningDuration;
           return nightWork.isNegative ? '--:--' : AppFunction.timeFormat(nightWorkTime);
         } else {
-          final time = DateTime(DateTime.now().year, DateTime.now().month,
-              DateTime.now().day, 20, 00);
+
+          if(work.startTime.hour >= 0) {
+            if(work.startTime.hour <= 6) {
+              final time = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 06, 00);
+              nightDuration = time.difference(work.startTime);
+            }
+          }
+
+          final time = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 20, 00);
           Duration nightWork = DateTime.now().difference(time);
           final nightWorkTime = nightWork + morningDuration;
-          return nightWork.isNegative
-              ? '--:--'
-              : AppFunction.timeFormat(nightWorkTime);
+          return nightWork.isNegative ? AppFunction.timeFormat(nightDuration) : AppFunction.timeFormat(nightWorkTime);
         }
       } else {
         if (work.startTime.day == detail.day) {

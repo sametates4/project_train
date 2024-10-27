@@ -1,9 +1,7 @@
+import '../manager/user_manager.dart';
+import '../model/user_model.dart';
 
-
-import 'package:project_train/core/manager/user_manager.dart';
-import 'package:project_train/core/model/user_model.dart';
-
-class UserService {
+final class UserService {
   HiveCacheManager<UserModel> manager = UserManager('users');
   static final UserService instance = UserService._privateConstructor();
   UserModel? currentUser;

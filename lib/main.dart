@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:project_train/core/service/setting_service.dart';
 import 'package:project_train/core/service/user_service.dart';
 import 'package:project_train/core/state/backup_state.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await UserService.instance.ensureInitialized();
+  await SettingService.instance.ensureInitialized();
   runApp(MyApp());
 }
 

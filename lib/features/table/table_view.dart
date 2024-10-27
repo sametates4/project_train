@@ -54,29 +54,29 @@ class _TableViewState extends State<TableView> {
               columnName: 'machinist',
               label: Container(
                   alignment: Alignment.center,
-                  child: Text(
+                  child: const Text(
                     'Makinist',
                   ))),
           GridColumn(
               columnName: 'trainNumber',
               label:
-                  Container(alignment: Alignment.center, child: Text('Giden'))),
+                  Container(alignment: Alignment.center, child: const Text('Giden'))),
           GridColumn(
               columnName: 'trainNumberTwo',
               label: Container(
                   alignment: Alignment.center,
-                  child: Text(
+                  child: const Text(
                     'Gelen',
                     overflow: TextOverflow.ellipsis,
                   ))),
           GridColumn(
               columnName: 'startTime',
               label: Container(
-                  alignment: Alignment.center, child: Text('İşe Başlama'))),
+                  alignment: Alignment.center, child: const Text('İşe Başlama'))),
           GridColumn(
               columnName: 'endTime',
               label: Container(
-                  alignment: Alignment.center, child: Text('İş Bitiş'))),
+                  alignment: Alignment.center, child: const Text('İş Bitiş'))),
           GridColumn(
               columnName: 'activeWorking',
               label: Container(
