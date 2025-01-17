@@ -1,5 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../model/mileage_compensation_model.dart';
 import '../model/user_model.dart';
 
 part '../abstract/user_cache_manager.dart';
@@ -41,6 +42,7 @@ final class UserManager extends HiveCacheManager<UserModel> {
   void registerAdapters() {
     if(!Hive.isAdapterRegistered(2)){
       Hive.registerAdapter(UserModelAdapter());
+      Hive.registerAdapter(MileageCompensationModelAdapter());
     }
   }
 

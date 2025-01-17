@@ -25,7 +25,7 @@ class Setting extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text('Makinist ve Tren şefi Bilgilerini al'),
-                    Switch(
+                    Switch.adaptive(
                       value: value.setting!.showMachinist,
                       onChanged: (val) {
                         value.updateSettings(
@@ -41,7 +41,7 @@ class Setting extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text('Yeni Tasarım (BETA)'),
-                    Switch(
+                    Switch.adaptive(
                       value: value.setting!.newUi,
                       onChanged: (val) {
                         value.updateSettings(

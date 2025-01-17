@@ -14,7 +14,7 @@ final class BackupState extends ChangeNotifier {
   NetworkService service = NetworkService(Dio(BaseOptions(baseUrl: 'https://api.sametates.dev')));
 
   int backupStatus = 0;
-  int backupLenght = 0;
+  int backupLength = 0;
   String backupMessage = "Yedeklemeye Hazırlanılıyor ...";
   List<WorkModel> list = [];
   List<WorkModel> cloudDataList = [];
@@ -28,7 +28,7 @@ final class BackupState extends ChangeNotifier {
 
   Future<void> _compareData() async {
     backupData = findUniqueItems(list, cloudDataList);
-    backupLenght = backupData.length;
+    backupLength = backupData.length;
     backupMessage = "${backupData.length} adet veri yedeklenecek ...";
     notifyListeners();
   }

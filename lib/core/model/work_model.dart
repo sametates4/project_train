@@ -1,5 +1,8 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'mileage_compensation_model.dart';
+
+
 part 'work_model.g.dart';
 
 @HiveType(typeId: 1)
@@ -20,6 +23,8 @@ final class WorkModel {
   final bool? offDay;
   @HiveField(7)
   final bool? weekOfDay;
+  @HiveField(8)
+  final List<MileageCompensationModel>? mileageList;
 
   WorkModel({
     required this.id,
@@ -30,6 +35,7 @@ final class WorkModel {
     this.endTime,
     this.offDay,
     this.weekOfDay,
+    this.mileageList,
   });
 
   factory WorkModel.fromMap(Map<String, dynamic> map) {
@@ -42,6 +48,7 @@ final class WorkModel {
       endTime: map['endTime'] as DateTime,
       offDay: map['offDay'] as bool,
       weekOfDay: map['weekOfDay'] as bool,
+        mileageList: map['mileageList']
     );
   }
 
@@ -53,7 +60,8 @@ final class WorkModel {
     startTime: DateTime.parse(json["startTime"]),
     endTime: json["endTime"].toString().isNotEmpty ? DateTime.parse(json["endTime"]) : null,
     offDay: json["offDay"].toString().isNotEmpty ? bool.parse(json["offDay"]) : null,
-    weekOfDay: json["weekOfDay"].toString().isNotEmpty ? bool.parse(json["weekOfDay"]) : null
+    weekOfDay: json["weekOfDay"].toString().isNotEmpty ? bool.parse(json["weekOfDay"]) : null,
+      mileageList: json['mileageList']
   );
 
 }

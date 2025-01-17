@@ -1,9 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:project_train/core/function/app_function.dart';
 import 'package:project_train/core/model/work_model.dart';
 import 'package:project_train/core/state/app_state.dart';
 import 'package:project_train/sheet/time_sheet.dart';
+import 'package:project_train/widget/auto_complete.dart';
 import 'package:project_train/widget/sheet_divider.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +32,11 @@ class _CreateWorkViewState extends State<CreateWorkView> {
   final startTime = TextEditingController();
   final endTime = TextEditingController();
 
+  String inputText = ""; // Kullanıcının girdiği metin
+  String hintText = "";  // Dinamik olarak kalan metin
+  String _currentText = '';
+  String _lastUserInput = '';
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +57,37 @@ class _CreateWorkViewState extends State<CreateWorkView> {
     context.read<AppState>().setFinishTime(widget.model?.endTime);
   }
 
+
+
+  void _onTextChanged(String value) {
+    if (_lastUserInput.length > value.length) {
+      // Eğer silme işlemi yapılmışsa
+      //_lastUserInput = value;
+      return; // Silme işlemi sırasında otomatik tamamlama yapılmasın
+    }
+
+    setState(() {
+      _lastUserInput = value;
+      String? match = context.read<AppState>().nameList.firstWhere(
+            (item) => item.toLowerCase().startsWith(value.toLowerCase()),
+        orElse: () => '',
+      );
+
+      if (match.isNotEmpty && value.isNotEmpty) {
+        // Kullanıcının girdisi eşleşirse otomatik tamamlama
+        machinist.value = TextEditingValue(
+          text: match,
+          selection: TextSelection(
+            baseOffset: value.length,
+            extentOffset: match.length,
+          ),
+        );
+      }
+    });
+
+    print(_lastUserInput);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -63,22 +102,20 @@ class _CreateWorkViewState extends State<CreateWorkView> {
         child: Column(
           children: [
             SheetDivider.showDivider(),
-            TextField(
+            AutoComplete(
               controller: machinist,
-              textInputAction: TextInputAction.next,
-              keyboardType: TextInputType.name,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                  labelText: 'Makinist Adı'),
+              list: context.read<AppState>().nameList,
+              labelText: 'Makinist Adı',
+              inputAction: TextInputAction.next,
+              inputType: TextInputType.name,
             ),
             const SizedBox(height: 10),
-            TextField(
+            AutoComplete(
               controller: machinistTwo,
-              textInputAction: TextInputAction.next,
-              keyboardType: TextInputType.name,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                  labelText: 'Tren Şefi Adı'),
+              list: context.read<AppState>().nameList,
+              labelText: 'Tren Şefi Adı',
+              inputAction: TextInputAction.next,
+              inputType: TextInputType.name,
             ),
             const SizedBox(height: 10),
             SizedBox(
@@ -93,7 +130,10 @@ class _CreateWorkViewState extends State<CreateWorkView> {
                     child: TextField(
                       controller: trainNumber,
                       textInputAction: TextInputAction.next,
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.numberWithOptions(signed: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
                       decoration: InputDecoration(
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20)),
@@ -106,11 +146,14 @@ class _CreateWorkViewState extends State<CreateWorkView> {
                     child: TextField(
                       controller: trainNumberTwo,
                       textInputAction: TextInputAction.done,
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.numberWithOptions(signed: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
                       decoration: InputDecoration(
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20)),
-                          labelText: 'Varış Tren Numarası'),
+                          labelText: 'Dönüş Tren Numarası'),
                     ),
                   ),
                 ],
@@ -137,7 +180,7 @@ class _CreateWorkViewState extends State<CreateWorkView> {
                           decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(20)),
-                              labelText: 'Çıkış Saati',
+                              labelText: 'Görev Alma Saati',
                           ),
                         ),
                         IconButton(
@@ -172,7 +215,7 @@ class _CreateWorkViewState extends State<CreateWorkView> {
                           decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(20)),
-                              labelText: 'Varış Saati',
+                              labelText: 'İş Bitiş Saati',
                           ),
                         ),
                         IconButton(
@@ -207,6 +250,7 @@ class _CreateWorkViewState extends State<CreateWorkView> {
                     trainNumberTwo: trainNumberTwo.text.isNotEmpty ? int.parse(trainNumberTwo.text) : null,
                     startTime: context.read<AppState>().startTime!,
                     endTime: context.read<AppState>().endTime,
+                    mileageList: widget.model?.mileageList != null ? widget.model!.mileageList : null
                 );
                 if(widget.model == null) {
                   context.read<AppState>().addWorkData(items: working);

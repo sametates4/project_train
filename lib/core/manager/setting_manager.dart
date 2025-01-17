@@ -1,6 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../abstract/storage_cache_manager.dart';
+import '../model/adapter/duration_adapter.dart';
 import '../model/settings_model.dart';
 
 final class SettingManager extends StorageCacheManager<SettingsModel> {
@@ -47,6 +48,7 @@ final class SettingManager extends StorageCacheManager<SettingsModel> {
   void registerAdapters() {
     if(!Hive.isAdapterRegistered(3)) {
       Hive.registerAdapter(SettingsModelAdapter());
+      Hive.registerAdapter(DurationAdapter());
     }
   }
 

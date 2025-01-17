@@ -25,13 +25,14 @@ class WorkModelAdapter extends TypeAdapter<WorkModel> {
       endTime: fields[5] as DateTime?,
       offDay: fields[6] as bool?,
       weekOfDay: fields[7] as bool?,
+      mileageList: (fields[8] as List?)?.cast<MileageCompensationModel>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, WorkModel obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class WorkModelAdapter extends TypeAdapter<WorkModel> {
       ..writeByte(6)
       ..write(obj.offDay)
       ..writeByte(7)
-      ..write(obj.weekOfDay);
+      ..write(obj.weekOfDay)
+      ..writeByte(8)
+      ..write(obj.mileageList);
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../core/constant/button_constant.dart';
@@ -35,6 +36,7 @@ class AppointmentCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 PopupMenuButton(
+                  icon: const Icon(Icons.more_vert_outlined),
                   elevation: 10,
                   position: PopupMenuPosition.under,
                   itemBuilder: (context) => ButtonConstant.popUpEntry(

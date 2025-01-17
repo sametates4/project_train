@@ -25,21 +25,24 @@ class _MonthlyWorkSetState extends State<MonthlyWorkSet> {
           height: 150,
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(20)),
+
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  const SizedBox(width: 5),
                   SizedBox(
-                      width: 80,
+                      width: 75,
                       height: 50,
                       child: TextField(
                         controller: _hour,
                         textAlign: TextAlign.center,
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.numberWithOptions(signed: true, decimal: false),
                         decoration: const InputDecoration(
                             hintText: 'Saat'
                         ),
@@ -47,18 +50,18 @@ class _MonthlyWorkSetState extends State<MonthlyWorkSet> {
                   ),
                   const Text(':'),
                   SizedBox(
-                      width: 80,
+                      width: 75,
                       height: 50,
                       child: TextField(
                         controller: _minute,
                         textAlign: TextAlign.center,
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.numberWithOptions(signed: true, decimal: false),
                         decoration: const InputDecoration(
                             hintText: 'Dakika'
                         ),
                       )
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 6),
                   ElevatedButton(
                     child: const Text('Çalışma Saati Ayarla'),
                     onPressed: () {
@@ -73,8 +76,8 @@ class _MonthlyWorkSetState extends State<MonthlyWorkSet> {
                       value.updateSettings(settingsData: settingsData);
                       context.router.popForced();
                     },
-                  )
-
+                  ),
+                  const SizedBox(width: 5),
                 ],
               ),
 

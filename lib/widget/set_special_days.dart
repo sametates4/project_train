@@ -21,7 +21,6 @@ class SetSpecialDays extends StatefulWidget {
 }
 
 class _SetSpecialDaysState extends State<SetSpecialDays> {
-
   int? selectedRadio = 9;
 
   DateTime setTime(DateTime time, int minute) {
@@ -30,7 +29,6 @@ class _SetSpecialDaysState extends State<SetSpecialDays> {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       width: double.infinity,
       height: 250,
@@ -60,7 +58,7 @@ class _SetSpecialDaysState extends State<SetSpecialDays> {
             },
           ),
           RadioListTile<int>(
-            title: const Text('İhtiyat (BETA NOT WORKİNG)'),
+            title: const Text('İhtiyat'),
             value: 2,
             groupValue: selectedRadio,
             onChanged: (value) {
@@ -70,26 +68,41 @@ class _SetSpecialDaysState extends State<SetSpecialDays> {
             },
           ),
           ElevatedButton(
-            onPressed: selectedRadio != 4 ? () {
-              final working = WorkModel(
-                id: context.read<AppState>().work!.length+1,
-                machinist: selectedRadio == 0 ? 'Hafta Tatili' : selectedRadio == 1 ? 'Yıllık İzin' : '',
-                trainNumber: selectedRadio == 0 ? 99991 : selectedRadio == 1 ? 99992 : 99993,
-                trainNumberTwo: 99999,
-                startTime: setTime(widget.details.date!, 1),
-                endTime: setTime(widget.details.date!, 2),
-              );
-              selectedRadio == 2 ? {
-              AppFunction.showMainSheet(
-              context: context,
-              child: const SetTime())
-              } : {
-                context.read<AppState>().addWorkData(items: working),
-                context.router.popForced()
-              };
-
-            } : null ,
-            child: const Text('Kayıt Et'),
+            onPressed: selectedRadio != 4
+                ? () {
+                    final working = WorkModel(
+                      id: context.read<AppState>().work!.length + 1,
+                      machinist: selectedRadio == 0
+                          ? 'Hafta Tatili'
+                          : selectedRadio == 1
+                              ? 'Yıllık İzin'
+                              : '',
+                      trainNumber: selectedRadio == 0
+                          ? 99991
+                          : selectedRadio == 1
+                              ? 99992
+                              : 99993,
+                      trainNumberTwo: 88888,
+                      startTime: setTime(widget.details.date!, 0),
+                      endTime: setTime(widget.details.date!, 0),
+                    );
+                    selectedRadio == 2
+                        ? {
+                            context.router.popForced(),
+                            AppFunction.showMainSheet(
+                                context: context, child: const SetTime())
+                          }
+                        : {
+                            context
+                                .read<AppState>()
+                                .addWorkData(items: working),
+                            context.router.popForced()
+                          };
+                  }
+                : null,
+            child: selectedRadio == 2
+                ? const Text('Devam Et')
+                : const Text('Kayıt Et'),
           )
         ],
       ),

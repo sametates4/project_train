@@ -20,7 +20,17 @@ final class AppState extends ChangeNotifier{
   SettingsModel? setting = SettingService.instance.service;
 
   List<WorkModel>? work;
+  Set<DateTime> reportDays = {
+    DateTime(2025, 01, 01),
+    DateTime(2025, 04, 23),
+    DateTime(2025, 05, 01),
+    DateTime(2025, 05, 19),
+    DateTime(2025, 07, 15),
+    DateTime(2025, 08, 30),
+    DateTime(2025, 10, 29),
+  };
   bool loading = false;
+  List<String> nameList = ['Samet ATEŞ'];
 
   DateTime? startTime;
   DateTime? endTime;
@@ -30,12 +40,16 @@ final class AppState extends ChangeNotifier{
   Duration monthlyWorkTime = Duration.zero;
   String monthlyWorkTimeString = '';
 
+
   Future<void> ensureInit() async {
     await _workService.init();
     work = _workService.getValues();
     loading = true;
     notifyListeners();
     getMonthlyWork(month: DateTime.now().month);
+    if(user!.kky == 11006644) {
+      setNameList();
+    }
   }
 
   Future<void> addWorkData({required WorkModel items}) async {
@@ -45,6 +59,21 @@ final class AppState extends ChangeNotifier{
     notifyListeners();
     reCalculateMonthlyWork(month: DateTime.now().month);
     timeClear();
+  }
+
+  void setNameList() {
+    for(var i in work!) {
+      final res = i.machinist?.split(' - ');
+      nameList.add(res![0]);
+      if(i.trainNumberTwo == 88888) {
+        final res = generateDateRange(i.startTime, i.endTime!);
+        reportDays.addAll(res);
+      }
+      try {
+        nameList.add(res[1]);
+      } catch (e) {}
+    }
+    notifyListeners();
   }
 
   void clear() => work?.clear();
@@ -96,24 +125,44 @@ final class AppState extends ChangeNotifier{
     getMonthlyWork(month: month);
   }
 
+  String findMatchingHint(String input) {
+    // Listeyi kontrol edip eşleşen ismi bulalım
+    for (String name in nameList) {
+      if (name.toLowerCase().startsWith(input.toLowerCase())) {
+        return name.substring(input.length); // Eşleşmeyen kısmı döndür
+      }
+    }
+    return ""; // Eşleşme yoksa boş döndür
+  }
+
+
 
   void getMonthlyWork({required int month}) {
     Duration time = const Duration(hours: 0, minutes: 0);
-    for(WorkModel i in work ?? []) {
-      if(i.startTime.month == month) {
-        if(i.endTime != null) {
-          final dailyActivityWork = i.endTime!.difference(i.startTime);
-          time = time + dailyActivityWork;
-        } else {
-          final dailyActivityWork = DateTime.now().difference(i.startTime);
-          time = time + dailyActivityWork;
+    for (WorkModel i in work ?? []) {
+
+      DateTime endTime = i.endTime ?? DateTime.now();
+      if (i.startTime.month != endTime.month) {
+        DateTime endOfStartMonth = DateTime(i.startTime.year, i.startTime.month + 1, 1)
+            .subtract(const Duration(seconds: 1));
+        if (i.startTime.month == month) {
+          time += endOfStartMonth.difference(i.startTime) + const Duration(seconds: 1);
         }
+        DateTime startOfEndMonth = DateTime(endTime.year, endTime.month, 1);
+        if (endTime.month == month) {
+          time += endTime.difference(startOfEndMonth);
+        }
+      } else if (i.startTime.month == month) {
+        time += endTime.difference(i.startTime);
       }
     }
+
     monthlyWorkTime = time;
     monthlyWorkTimeString = AppFunction.timeFormat(time);
     notifyListeners();
   }
+
+
 
   void monthlyReport() {
     Duration nightWork = Duration.zero;
@@ -137,7 +186,7 @@ final class AppState extends ChangeNotifier{
   void timeClear() {
     startTime = null;
     endTime = null;
-    notifyListeners(); // ihtiyaç yok
+    notifyListeners();
   }
 
 
@@ -158,5 +207,19 @@ final class AppState extends ChangeNotifier{
         ? const Duration(hours: 300)
         : Duration(hours: setting!.workingHour!.inHours, minutes: setting!.workingHour!.inMinutes);
   }
+
+  Set<DateTime> generateDateRange(DateTime startTime, DateTime endTime) {
+    Set<DateTime> dateRange = {};
+    DateTime currentDate = DateUtils.dateOnly(startTime);
+    DateTime lastDate = DateUtils.dateOnly(endTime);
+
+    while (!currentDate.isAfter(lastDate)) {
+      dateRange.add(currentDate);
+      currentDate = currentDate.add(const Duration(days: 1));
+    }
+
+    return dateRange;
+  }
+
 
 }

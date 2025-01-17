@@ -19,6 +19,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
+
   final _appRouter = AppRouter();
 
   @override
@@ -29,14 +30,14 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => BackupState()),
       ],
       child: MaterialApp.router(
-        routerDelegate: _appRouter.delegate(),
-        routeInformationParser: _appRouter.defaultRouteParser(),
-        title: '4011',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
-          scaffoldBackgroundColor: const Color.fromARGB(255, 245, 245, 245),
-          useMaterial3: true,
-        ),
+          routerDelegate: _appRouter.delegate(),
+          routeInformationParser: _appRouter.defaultRouteParser(),
+          title: 'Project Train',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
+            scaffoldBackgroundColor: const Color.fromARGB(255, 245, 245, 245),
+            useMaterial3: true,
+          ),
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
@@ -44,8 +45,7 @@ class MyApp extends StatelessWidget {
           ],
           supportedLocales: const [
             Locale('tr'), // Turkish
-          ]
-      ),
+          ]),
     );
   }
 }

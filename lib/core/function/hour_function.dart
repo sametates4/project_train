@@ -288,5 +288,38 @@ final class HourFunction {
     return shift.isNegative ? '--:--' : AppFunction.timeFormat(shift);
   }
 
-  static String trainNumber(int? data) => data?.toString() ?? '-----';
+  static String trainNumber(int? data) => data == 74701 ? 'Servis Bila' : data?.toString() ?? '-----';
+
+  static String getTime(DateTime? detail) {
+    if(detail != null){
+      final duration = Duration(hours: detail.hour, minutes: detail.minute);
+      return AppFunction.timeFormat(duration);
+    }
+    return '--:--';
+  }
+
+  static String getMileageTime(DateTime start, DateTime? end) {
+    if(end != null) {
+      final duration = end.difference(start);
+      return AppFunction.timeFormat(duration);
+    }
+    final duration = DateTime.now().difference(start);
+    return AppFunction.timeFormat(duration);
+  }
+
+  static String getChefTime(DateTime start, DateTime? end, int num) {
+    List number = num.toString().split('').map(int.parse).toList();
+    if(number[1] == 2) {
+      return '--:--';
+    }
+    if(end != null) {
+      final duration = end.difference(start);
+      Duration halfDuration = Duration(milliseconds: duration.inMilliseconds ~/ 2);
+      return AppFunction.timeFormat(halfDuration);
+    }
+    final duration = DateTime.now().difference(start);
+    Duration halfDuration = Duration(milliseconds: duration.inMilliseconds ~/ 2);
+    return AppFunction.timeFormat(halfDuration);
+  }
+
 }
