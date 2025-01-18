@@ -20,7 +20,7 @@ final class ButtonConstant {
     required DateTime date,
   })
   {
-    return model.machinist == "DEPO"
+    return model.machinist == "DEPO" || model.machinist == "İhtiyat"
         ? [
             PopupMenuItem(
               child: const Text('Sil'),

@@ -35,7 +35,7 @@ final class WorkDataManager extends CalendarDataSource {
 
   @override
   Color getColor(int index) {
-    return _getWorkingData(index).machinist == "RAPOR" ? Colors.transparent : AppFunction.randomColor();
+    return _getWorkingData(index).trainNumberTwo == 88888 ? Colors.transparent : AppFunction.randomColor();
   }
 
   @override

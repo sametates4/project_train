@@ -1,28 +1,31 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:project_train/widget/sheet_divider.dart';
 import 'package:provider/provider.dart';
 
 import '../core/function/app_function.dart';
 import '../core/model/work_model.dart';
 import '../core/state/app_state.dart';
 import '../sheet/time_sheet.dart';
-import 'sheet_divider.dart';
 
-class SetTime extends StatefulWidget {
-  const SetTime({super.key, required this.dateTime});
+class SetDate extends StatefulWidget {
+  const SetDate({super.key, required this.title, required this.dateTime});
 
+  final String title;
   final DateTime dateTime;
 
   @override
-  State<SetTime> createState() => _SetTimeState();
+  State<SetDate> createState() => _SetDateState();
 }
 
-class _SetTimeState extends State<SetTime> {
-  DateTime? startWorkTime;
-  Duration workDuration = Duration.zero;
-  String startTime = "Tarih Şecilmedi";
-  String workTime = "Süre Şecilmedi";
+class _SetDateState extends State<SetDate> {
+
+  DateTime? startDate;
+  DateTime? endDate;
+
+  String startText = "";
+  String endText = "";
+
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +35,6 @@ class _SetTimeState extends State<SetTime> {
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(20)),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
 
           SheetDivider.showDivider(),
@@ -40,8 +42,8 @@ class _SetTimeState extends State<SetTime> {
           Row(
             children: [
               const SizedBox(width: 10),
-              Text('Görev Alma Saati: '),
-              Text(startTime),
+              Text('${widget.title} başlama tarihi: '),
+              Text(startText),
               const Spacer(),
               IconButton(
                 icon: const Icon(Icons.date_range_outlined),
@@ -53,8 +55,8 @@ class _SetTimeState extends State<SetTime> {
                         start: true,
                         onDateTimeChanged: (date) {
                           setState(() {
-                            startWorkTime = date;
-                            startTime = AppFunction.dateTimeFormat(date);
+                            startDate = date;
+                            startText = AppFunction.dateTimeFormat(date);
                           });
                         },
                       )
@@ -67,30 +69,23 @@ class _SetTimeState extends State<SetTime> {
           Row(
             children: [
               const SizedBox(width: 10),
-              Text('İhtiyat Süresi: '),
-              Text(workTime),
+              Text('${widget.title} bitiş tarihi: '),
+              Text(endText),
               const Spacer(),
               IconButton(
                 icon: const Icon(Icons.date_range_outlined),
                 onPressed: () {
                   AppFunction.showMainSheet(
                       context: context,
-                      child: Container(
-                        height: 250,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white
-                        ),
-                        child: CupertinoTimerPicker(
-                          onTimerDurationChanged: (value) {
-                            setState(() {
-                              workDuration = value;
-                              workTime = AppFunction.timeFormat(value);
-                            });
-                          },
-                          mode: CupertinoTimerPickerMode.hm,
-                        ),
+                      child: TimeSheet(
+                        dateTime: widget.dateTime,
+                        start: true,
+                        onDateTimeChanged: (date) {
+                          setState(() {
+                            endDate = date;
+                            endText = AppFunction.dateTimeFormat(date);
+                          });
+                        },
                       )
                   );
                 },
@@ -105,11 +100,11 @@ class _SetTimeState extends State<SetTime> {
             onPressed: () {
               final working = WorkModel(
                 id: context.read<AppState>().work!.length+1,
-                machinist: 'İhtiyat',
+                machinist: widget.title,
                 trainNumber: 99993,
-                trainNumberTwo: 99999,
-                startTime: startWorkTime!,
-                endTime: startWorkTime!.add(workDuration),
+                trainNumberTwo: 88888,
+                startTime: startDate!,
+                endTime: endDate,
               );
               context.read<AppState>().addWorkData(items: working);
               context.router.popForced();
@@ -117,6 +112,7 @@ class _SetTimeState extends State<SetTime> {
           ),
 
           const SizedBox(height: 10),
+
         ],
       ),
     );

@@ -141,19 +141,23 @@ final class AppState extends ChangeNotifier{
     Duration time = const Duration(hours: 0, minutes: 0);
     for (WorkModel i in work ?? []) {
 
-      DateTime endTime = i.endTime ?? DateTime.now();
-      if (i.startTime.month != endTime.month) {
-        DateTime endOfStartMonth = DateTime(i.startTime.year, i.startTime.month + 1, 1)
-            .subtract(const Duration(seconds: 1));
-        if (i.startTime.month == month) {
-          time += endOfStartMonth.difference(i.startTime) + const Duration(seconds: 1);
+      if(i.trainNumberTwo != 88888) {
+
+        DateTime endTime = i.endTime ?? DateTime.now();
+        if (i.startTime.month != endTime.month) {
+          DateTime endOfStartMonth = DateTime(i.startTime.year, i.startTime.month + 1, 1)
+              .subtract(const Duration(seconds: 1));
+          if (i.startTime.month == month) {
+            time += endOfStartMonth.difference(i.startTime) + const Duration(seconds: 1);
+          }
+          DateTime startOfEndMonth = DateTime(endTime.year, endTime.month, 1);
+          if (endTime.month == month) {
+            time += endTime.difference(startOfEndMonth);
+          }
+        } else if (i.startTime.month == month) {
+          time += endTime.difference(i.startTime);
         }
-        DateTime startOfEndMonth = DateTime(endTime.year, endTime.month, 1);
-        if (endTime.month == month) {
-          time += endTime.difference(startOfEndMonth);
-        }
-      } else if (i.startTime.month == month) {
-        time += endTime.difference(i.startTime);
+
       }
     }
 
